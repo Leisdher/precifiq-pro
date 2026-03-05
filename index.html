@@ -1,281 +1,327 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="light">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Precifiq PRO | Lezari Inteligência</title>
+    <title>Precifiq PRO | Dashboard Sênior Lezari</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { brand: '#10B981', darkbg: '#0F172A', darkcard: '#1E293B' }
-                }
-            }
+            theme: { extend: { colors: { brand: '#10B981', darkbg: '#0F172A', darkcard: '#1E293B', darkborder: '#334155' } } }
         }
     </script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 10px; }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-100 transition-colors duration-300 font-sans text-sm">
+<body class="bg-darkbg text-gray-100 font-sans text-sm min-h-screen">
 
-    <header class="bg-white dark:bg-darkcard shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <i data-lucide="shield-check" class="text-brand w-6 h-6"></i>
-                <h1 class="text-xl font-bold tracking-tight">Precifiq <span class="text-brand">PRO</span></h1>
+    <header class="bg-darkcard border-b border-darkborder sticky top-0 z-50 shadow-md">
+        <div class="max-w-screen-2xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="shield-check" class="text-brand w-7 h-7"></i>
+                <div>
+                    <h1 class="text-xl font-black tracking-tight leading-none">Precifiq <span class="text-brand">PRO</span></h1>
+                    <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Donna Martins Intelligence</span>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <label class="flex items-center gap-2 cursor-pointer bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-600">
-                    <span class="font-bold text-xs" id="lblVarejo">VAREJO</span>
-                    <input type="checkbox" id="toggleAtacado" class="sr-only" onchange="calcularTudo()">
-                    <div class="w-10 h-5 bg-gray-300 dark:bg-gray-600 rounded-full relative transition-colors"><div id="dotAtacado" class="w-4 h-4 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform"></div></div>
-                    <span class="font-bold text-xs text-gray-400" id="lblAtacado">ATACADO</span>
-                </label>
-                <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 transition">
-                    <i data-lucide="moon" id="moonIcon" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
-                    <i data-lucide="sun" id="sunIcon" class="w-5 h-5 text-yellow-500 hidden"></i>
+            <div class="flex gap-4 items-center">
+                <div class="bg-gray-800 rounded-lg p-1 flex border border-darkborder">
+                    <button id="btnVarejo" class="px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow" onclick="setModo('varejo')">VAREJO</button>
+                    <button id="btnAtacado" class="px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white" onclick="setModo('atacado')">ATACADO</button>
+                </div>
+                <button onclick="salvarGeral()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded shadow flex items-center gap-2 transition">
+                    <i data-lucide="save" class="w-4 h-4"></i> Salvar Tudo
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <main class="max-w-screen-2xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <aside class="xl:col-span-3 space-y-4">
-            <div class="bg-white dark:bg-darkcard rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
-                <h2 class="font-bold uppercase text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Pedágio da Empresa</h2>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center"><label class="text-xs font-semibold">Simples Nacional (%)</label><input type="number" id="inpImposto" class="w-20 text-right bg-gray-50 dark:bg-gray-800 border rounded p-1 dark:border-gray-600" oninput="salvarConfig(); calcularTudo()"></div>
-                    <div class="flex justify-between items-center"><label class="text-xs font-semibold">Custo Fixo Operacional (%)</label><input type="number" id="inpCustoFixo" class="w-20 text-right bg-gray-50 dark:bg-gray-800 border rounded p-1 dark:border-gray-600" oninput="salvarConfig(); calcularTudo()"></div>
-                    <div class="flex justify-between items-center"><label class="text-xs font-semibold">Provisão Devolução (%)</label><input type="number" id="inpDevolucao" class="w-20 text-right bg-gray-50 dark:bg-gray-800 border rounded p-1 dark:border-gray-600" oninput="salvarConfig(); calcularTudo()"></div>
-                    <div class="flex justify-between items-center"><label class="text-xs font-semibold">Custo Capital/Juros (%)</label><input type="number" id="inpJuros" class="w-20 text-right bg-gray-50 dark:bg-gray-800 border rounded p-1 dark:border-gray-600" oninput="salvarConfig(); calcularTudo()"></div>
-                    <hr class="dark:border-gray-700">
-                    <div class="flex justify-between items-center"><label class="text-xs font-semibold text-red-500">Insucesso Flex/Motoboy (%)</label><input type="number" id="inpInsucesso" class="w-20 text-right bg-red-50 dark:bg-red-900/20 text-red-600 border border-red-200 rounded p-1" oninput="salvarConfig(); calcularTudo()"></div>
+        <aside class="lg:col-span-3 space-y-6">
+            <div class="bg-darkcard rounded-xl p-5 border border-darkborder shadow-lg">
+                <h2 class="font-black uppercase text-gray-300 mb-4 flex items-center gap-2 border-b border-darkborder pb-2">
+                    <i data-lucide="building" class="w-4 h-4 text-brand"></i> Estrutura da Empresa
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">Simples Nacional / Imposto (%)</label>
+                        <input type="number" id="g_imposto" value="10.00" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">Custo Fixo Operacional (%)</label>
+                        <input type="number" id="g_custofixo" value="11.29" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Devoluções (%)</label>
+                            <input type="number" id="g_devolucao" value="2.00" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Juros Emp. (%)</label>
+                            <input type="number" id="g_juros" value="0.00" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+                        </div>
+                    </div>
                 </div>
-                <button onclick="alert('Configurações Globais Salvas com Sucesso na sua Máquina!')" class="w-full mt-4 bg-gray-100 dark:bg-gray-800 py-2 rounded text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition">Salvar Configurações</button>
+            </div>
+
+            <div class="bg-darkcard rounded-xl p-5 border border-darkborder shadow-lg border-l-4 border-l-brand">
+                <h2 class="font-black uppercase text-brand mb-4 flex items-center gap-2 border-b border-darkborder pb-2">
+                    <i data-lucide="package" class="w-4 h-4"></i> Custo do Produto / Kit
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">Custo de Fábrica (R$ unitário)</label>
+                        <input type="number" id="p_custo" value="25.00" class="w-full bg-gray-900 border border-brand text-xl rounded p-2 text-white font-black mt-1" oninput="calcularTudo()">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Embalagem (R$)</label>
+                            <input type="number" id="p_embalagem" value="1.50" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-brand uppercase">Qtd (Formar Kit)</label>
+                            <input type="number" id="p_qtd" value="1" class="w-full bg-brand/20 border border-brand rounded p-2 text-brand font-black mt-1" oninput="calcularTudo()">
+                        </div>
+                    </div>
+                    <hr class="border-darkborder">
+                    <div>
+                        <label class="text-xs font-black text-white uppercase">Margem de Lucro Desejada (%)</label>
+                        <input type="number" id="p_lucro" value="20.00" class="w-full bg-green-900/30 border border-green-500 rounded p-2 text-green-400 text-lg font-black mt-1 text-center" oninput="calcularTudo()">
+                    </div>
+                </div>
             </div>
         </aside>
 
-        <section class="xl:col-span-9 space-y-4">
+        <section class="lg:col-span-9 space-y-6">
             
-            <div class="bg-white dark:bg-darkcard rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700 grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div class="col-span-2"><label class="text-xs font-bold uppercase">Custo Fábrica (R$)</label><input type="number" id="inpCustoBase" value="25.00" class="w-full mt-1 text-lg font-bold bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
-                <div><label class="text-xs font-bold uppercase">Embalagem (R$)</label><input type="number" id="inpEmbalagem" value="1.50" class="w-full mt-1 bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
-                <div><label class="text-xs font-bold uppercase">Itens (Qtd)</label><input type="number" id="inpQtdKit" value="1" class="w-full mt-1 bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
-                
-                <div class="col-span-2 md:col-span-1 border-l pl-4 dark:border-gray-700">
-                    <label class="text-xs font-bold text-brand uppercase">Margem Lucro (%)</label>
-                    <input type="number" id="inpLucro" value="20.00" class="w-full mt-1 text-lg font-bold text-brand bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded px-3 py-2" oninput="calcularTudo()">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="cardsPlataformas">
                 </div>
-                <div><label class="text-xs font-bold uppercase">Ads / Mkt (%)</label><input type="number" id="inpAds" value="0.00" class="w-full mt-1 bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
-                <div><label class="text-xs font-bold uppercase">Antecipação (%)</label><input type="number" id="inpAntecipacao" value="0.00" class="w-full mt-1 bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
+
+            <div class="bg-darkcard rounded-xl p-5 border border-darkborder shadow-lg">
+                <h2 class="font-black uppercase text-gray-300 mb-4 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-brand"></i> Comparativo de Lucro Líquido (R$)</h2>
+                <div class="h-64 w-full">
+                    <canvas id="lucroChart"></canvas>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cardsContainer">
-                </div>
         </section>
     </main>
 
     <script>
         lucide.createIcons();
+        let chartInstance = null;
+        let modoAtual = 'varejo'; // ou atacado
 
-        // Dark Mode Logic
-        const html = document.documentElement;
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            html.classList.toggle('dark');
-            document.getElementById('moonIcon').classList.toggle('hidden');
-            document.getElementById('sunIcon').classList.toggle('hidden');
-        });
-
-        // Toggle Atacado Logic
-        const toggleAtacado = document.getElementById('toggleAtacado');
-        const dotAtacado = document.getElementById('dotAtacado');
-        const lblVarejo = document.getElementById('lblVarejo');
-        const lblAtacado = document.getElementById('lblAtacado');
-
-        toggleAtacado.addEventListener('change', () => {
-            if(toggleAtacado.checked) {
-                dotAtacado.classList.add('translate-x-5');
-                lblAtacado.classList.replace('text-gray-400', 'text-brand');
-                lblVarejo.classList.replace('text-brand', 'text-gray-400');
-            } else {
-                dotAtacado.classList.remove('translate-x-5');
-                lblVarejo.classList.replace('text-gray-400', 'text-brand');
-                lblAtacado.classList.replace('text-brand', 'text-gray-400');
-            }
-        });
-
-        // Salvar Configurações no Navegador (Garante que os dados não sumam)
-        function salvarConfig() {
-            const config = {
-                imposto: document.getElementById('inpImposto').value,
-                custoFixo: document.getElementById('inpCustoFixo').value,
-                devolucao: document.getElementById('inpDevolucao').value,
-                juros: document.getElementById('inpJuros').value,
-                insucesso: document.getElementById('inpInsucesso').value
-            };
-            localStorage.setItem('lezari_config', JSON.stringify(config));
+        function setModo(modo) {
+            modoAtual = modo;
+            document.getElementById('btnVarejo').className = modo === 'varejo' ? 'px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow' : 'px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white';
+            document.getElementById('btnAtacado').className = modo === 'atacado' ? 'px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow' : 'px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white';
+            calcularTudo();
         }
 
-        function carregarConfig() {
-            const config = JSON.parse(localStorage.getItem('lezari_config'));
-            if (config) {
-                document.getElementById('inpImposto').value = config.imposto || 10.00;
-                document.getElementById('inpCustoFixo').value = config.custoFixo || 11.29;
-                document.getElementById('inpDevolucao').value = config.devolucao || 4.00;
-                document.getElementById('inpJuros').value = config.juros || 0.00;
-                document.getElementById('inpInsucesso').value = config.insucesso || 1.50;
-            } else {
-                // Defaults da empresa
-                document.getElementById('inpImposto').value = 10.00;
-                document.getElementById('inpCustoFixo').value = 11.29;
-                document.getElementById('inpDevolucao').value = 4.00;
-                document.getElementById('inpJuros').value = 0.00;
-                document.getElementById('inpInsucesso').value = 1.50;
-            }
-        }
-
-        // Banco de Dados das Plataformas (Regras 2026 Sênior)
-        const canais = [
-            { id: 'meli', nome: 'Mercado Livre', comissao: 0.12, taxaFixa: 0, cor: 'border-yellow-400', permiteFlex: true, permiteFull: true },
-            { id: 'shopee', nome: 'Shopee', comissao: 0.20, taxaFixa: 4.00, cor: 'border-orange-500', permiteFlex: true, permiteFull: true },
-            { id: 'amazon', nome: 'Amazon', comissao: 0.14, taxaFixa: 5.00, cor: 'border-blue-600', permiteFlex: true, permiteFull: true },
-            { id: 'magalu', nome: 'Magalu', comissao: 0.16, taxaFixa: 3.00, cor: 'border-blue-400', permiteFlex: true, permiteFull: true },
-            { id: 'netshoes', nome: 'Netshoes', comissao: 0.20, taxaFixa: 5.00, cor: 'border-purple-600', permiteFlex: false, permiteFull: true },
-            { id: 'tiktok', nome: 'TikTok Shop', comissao: 0.12, taxaFixa: 4.00, cor: 'border-gray-800', permiteFlex: false, permiteFull: false },
-            { id: 'shein', nome: 'Shein', comissao: 0.16, taxaFixa: 4.00, cor: 'border-gray-400', permiteFlex: false, permiteFull: false },
-            { id: 'temu', nome: 'Temu (Semi-Ger)', comissao: 0.03, taxaFixa: 15.00, cor: 'border-red-500', permiteFlex: false, permiteFull: false },
-            { id: 'direta', nome: 'WhatsApp / Direta', comissao: 0.04, taxaFixa: 0, cor: 'border-green-500', permiteFlex: false, permiteFull: false }
+        // Banco de Dados Editável Sênior
+        let plataformas = [
+            { id: 'meli', nome: 'Mercado Livre', cor: 'border-yellow-400', text: 'text-yellow-400', comissao: 12, taxaFixa: 0, afliado: 0, antecipacao: 0, ads: 0 },
+            { id: 'shopee', nome: 'Shopee', cor: 'border-orange-500', text: 'text-orange-500', comissao: 20, taxaFixa: 4, afliado: 0, antecipacao: 0, ads: 0 },
+            { id: 'amazon', nome: 'Amazon', cor: 'border-blue-500', text: 'text-blue-500', comissao: 14, taxaFixa: 5, afliado: 0, antecipacao: 0, ads: 0 },
+            { id: 'shein', nome: 'Shein', cor: 'border-gray-300', text: 'text-gray-300', comissao: 16, taxaFixa: 4, afliado: 0, antecipacao: 0, ads: 0 },
+            { id: 'tiktok', nome: 'TikTok Shop', cor: 'border-pink-500', text: 'text-pink-500', comissao: 12, taxaFixa: 4, afliado: 5, antecipacao: 0, ads: 0 },
+            { id: 'direta', nome: 'Venda Direta / Site', cor: 'border-brand', text: 'text-brand', comissao: 4, taxaFixa: 0, afliado: 0, antecipacao: 0, ads: 0 }
         ];
 
-        // Estado da Logística de cada Card (Para guardar escolhas do usuário)
-        let logisticaStatus = {};
-        canais.forEach(c => { logisticaStatus[c.id] = { tipo: 'padrao', repasse: 13.90, motoboy: 15.00, icmsFull: 0.00 } });
-
-        function mudarLogistica(id, tipo) {
-            logisticaStatus[id].tipo = tipo;
-            calcularTudo();
+        // Carrega dados salvos no PC
+        function carregarDados() {
+            const salvos = localStorage.getItem('precifiq_dados');
+            if(salvos) {
+                const data = JSON.parse(salvos);
+                document.getElementById('g_imposto').value = data.g_imposto;
+                document.getElementById('g_custofixo').value = data.g_custofixo;
+                document.getElementById('g_devolucao').value = data.g_devolucao;
+                document.getElementById('g_juros').value = data.g_juros;
+                if(data.plataformas) plataformas = data.plataformas;
+            }
         }
 
-        function atualizarValorLogistica(id, campo, valor) {
-            logisticaStatus[id][campo] = parseFloat(valor) || 0;
-            calcularTudo();
+        function salvarGeral() {
+            const data = {
+                g_imposto: document.getElementById('g_imposto').value,
+                g_custofixo: document.getElementById('g_custofixo').value,
+                g_devolucao: document.getElementById('g_devolucao').value,
+                g_juros: document.getElementById('g_juros').value,
+                plataformas: plataformas
+            };
+            localStorage.setItem('precifiq_dados', JSON.stringify(data));
+            alert("Inteligência da Donna Martins salva com sucesso na sua máquina!");
+        }
+
+        // Atualiza variável do array
+        function atualizarPlataforma(id, campo, valor) {
+            const p = plataformas.find(x => x.id === id);
+            if(p) {
+                p[campo] = parseFloat(valor) || 0;
+                calcularTudo();
+            }
+        }
+
+        function toggleBreakdown(id) {
+            const el = document.getElementById(`breakdown_${id}`);
+            el.classList.toggle('hidden');
+        }
+
+        function formatMoney(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
         function calcularTudo() {
-            const isAtacado = toggleAtacado.checked;
+            const container = document.getElementById('cardsPlataformas');
+            container.innerHTML = '';
+            let chartLabels = [];
+            let chartData = [];
 
-            // Variáveis Internas
-            const imposto = (parseFloat(document.getElementById('inpImposto').value) || 0) / 100;
-            const custoFixo = (parseFloat(document.getElementById('inpCustoFixo').value) || 0) / 100;
-            const devolucao = (parseFloat(document.getElementById('inpDevolucao').value) || 0) / 100;
-            const juros = (parseFloat(document.getElementById('inpJuros').value) || 0) / 100;
-            const insucesso = (parseFloat(document.getElementById('inpInsucesso').value) || 0) / 100;
-            
-            // Variáveis Produto
-            const custoBase = parseFloat(document.getElementById('inpCustoBase').value) || 0;
-            const embalagemBase = parseFloat(document.getElementById('inpEmbalagem').value) || 0;
-            const qtdKit = parseFloat(document.getElementById('inpQtdKit').value) || 1;
-            
-            // Variáveis Estratégia
-            const lucroAlvo = (parseFloat(document.getElementById('inpLucro').value) || 0) / 100;
-            const ads = (parseFloat(document.getElementById('inpAds').value) || 0) / 100;
-            const antecipacao = (parseFloat(document.getElementById('inpAntecipacao').value) || 0) / 100;
+            // Puxar Estrutura Global
+            const imposto = (parseFloat(document.getElementById('g_imposto').value) || 0) / 100;
+            const custofixo = (parseFloat(document.getElementById('g_custofixo').value) || 0) / 100;
+            const devolucao = (parseFloat(document.getElementById('g_devolucao').value) || 0) / 100;
+            const juros = (parseFloat(document.getElementById('g_juros').value) || 0) / 100;
+            const empresaTotalPerc = imposto + custofixo + devolucao + juros;
 
-            const container = document.getElementById('cardsContainer');
-            container.innerHTML = ''; // Limpa os cards
+            // Produto
+            const custoBase = parseFloat(document.getElementById('p_custo').value) || 0;
+            const embalagem = parseFloat(document.getElementById('p_embalagem').value) || 0;
+            const qtd = parseInt(document.getElementById('p_qtd').value) || 1;
+            const margemDesejada = (parseFloat(document.getElementById('p_lucro').value) || 0) / 100;
 
-            canais.forEach(canal => {
-                // Trava do Atacado: Oculta plataformas que não operam B2B nativamente
-                if (isAtacado && (canal.id === 'temu' || canal.id === 'shein')) return;
+            const custoTotalFabrica = (custoBase * qtd) + embalagem;
 
-                const logistica = logisticaStatus[canal.id];
-                let embalagemCalculada = embalagemBase;
-                let taxaPlataformaFixa = canal.taxaFixa * (isAtacado ? 1 : qtdKit); // Regra de Kit aplicada
-                let impostoCalculado = imposto;
-                let custoExtraFlex = 0;
+            plataformas.forEach(plat => {
+                // Se Atacado, taxa fixa é cobrada 1x. Se Varejo (Kits), taxa fixa multiplica pela Qtd (Regra Shopee/Meli)
+                const taxaFixaReal = modoAtual === 'atacado' ? plat.taxaFixa : (plat.taxaFixa * qtd);
+                
+                const comissaoPerc = plat.comissao / 100;
+                const afiliadoPerc = plat.afliado / 100;
+                const antecipacaoPerc = plat.antecipacao / 100;
+                const adsPerc = plat.ads / 100;
 
-                // Tripla Checagem: Regras de Logística Avançada
-                if (logistica.tipo === 'full') {
-                    embalagemCalculada = 0; // O Galpão embala
-                    impostoCalculado = imposto + (logistica.icmsFull / 100); // Taxa de Filial MG/SC
-                } else if (logistica.tipo === 'flex') {
-                    // Custo do Motoboy - Repasse da Plataforma + Risco de Insucesso
-                    custoExtraFlex = (logistica.motoboy - logistica.repasse) + (logistica.motoboy * insucesso);
-                }
-
-                // Cálculo Reverso (Engenharia Financeira)
-                const pedagio = impostoCalculado + custoFixo + devolucao + juros;
-                const somaPercentuais = pedagio + canal.comissao + ads + antecipacao + lucroAlvo;
-                const divisor = 1 - somaPercentuais;
-
-                let custoAbsoluto = custoBase + embalagemCalculada + custoExtraFlex + taxaPlataformaFixa;
-                let pvSugerido = 0;
+                const platTotalPerc = comissaoPerc + afiliadoPerc + antecipacaoPerc + adsPerc;
+                
+                // Engenharia do Preço Sugerido (Mark-up Divisor)
+                const divisor = 1 - (empresaTotalPerc + platTotalPerc + margemDesejada);
+                let precoSugerido = 0;
+                let lucroSugerido = 0;
 
                 if (divisor > 0) {
-                    pvSugerido = custoAbsoluto / divisor;
+                    precoSugerido = (custoTotalFabrica + taxaFixaReal) / divisor;
+                    lucroSugerido = precoSugerido * margemDesejada;
                 }
 
-                // Correção Amazon FBA (Mínimo de comissão R$1,00)
-                if (canal.id === 'amazon' && (pvSugerido * canal.comissao) < 1.00) {
-                    pvSugerido = (custoAbsoluto + 1.00) / (divisor + canal.comissao); // Recalcula forçando 1 real fixo
-                }
+                // Engenharia do Simulador Livre (Se eu vender por X, qual o lucro?)
+                const inputSimulador = document.getElementById(`sim_${plat.id}`);
+                let precoSimulado = inputSimulador ? parseFloat(inputSimulador.value) : precoSugerido;
+                if(isNaN(precoSimulado) || precoSimulado === 0) precoSimulado = precoSugerido;
 
-                let lucroRealRS = pvSugerido * lucroAlvo;
-                let roi = (custoBase > 0) ? (lucroRealRS / custoBase) * 100 : 0;
-                let isLucro = lucroRealRS > 0 && divisor > 0;
+                const descontoEmpresaR = precoSimulado * empresaTotalPerc;
+                const descontoPlatR = (precoSimulado * platTotalPerc) + taxaFixaReal;
+                const lucroSimulado = precoSimulado - custoTotalFabrica - descontoEmpresaR - descontoPlatR;
+                const roiSimulado = custoTotalFabrica > 0 ? (lucroSimulado / custoTotalFabrica) * 100 : 0;
 
-                // Geração da Interface Dinâmica (HTML Sênior do Card)
+                const isLucroNegativo = lucroSimulado < 0;
+
+                // Salvar dados pro gráfico
+                chartLabels.push(plat.nome);
+                chartData.push(lucroSugerido);
+
+                // Montar o Card Dinâmico HTML
                 let cardHTML = `
-                <div class="bg-white dark:bg-darkcard rounded-xl border-l-4 ${canal.cor} border-y border-r border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-between overflow-hidden">
-                    <div class="p-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                        <h3 class="font-bold uppercase text-gray-700 dark:text-gray-200 text-xs">${canal.nome}</h3>
+                <div class="bg-gray-900 rounded-xl border-t-4 ${plat.cor} border-x border-b border-darkborder shadow flex flex-col overflow-hidden">
+                    <div class="p-3 bg-gray-800 border-b border-darkborder flex justify-between items-center">
+                        <h3 class="font-black uppercase ${plat.text} text-sm">${plat.nome}</h3>
                     </div>
                     
-                    <div class="p-4 flex-1">
-                        <div class="flex gap-1 mb-4 bg-gray-100 dark:bg-gray-800 p-1 rounded-md">
-                            <button onclick="mudarLogistica('${canal.id}', 'padrao')" class="flex-1 text-[10px] font-bold py-1 px-2 rounded ${logistica.tipo === 'padrao' ? 'bg-white dark:bg-gray-600 shadow' : 'text-gray-500'}">Padrão</button>
-                            ${canal.permiteFlex ? `<button onclick="mudarLogistica('${canal.id}', 'flex')" class="flex-1 text-[10px] font-bold py-1 px-2 rounded ${logistica.tipo === 'flex' ? 'bg-white dark:bg-gray-600 shadow text-blue-600' : 'text-gray-500'}">Flex</button>` : ''}
-                            ${canal.permiteFull ? `<button onclick="mudarLogistica('${canal.id}', 'full')" class="flex-1 text-[10px] font-bold py-1 px-2 rounded ${logistica.tipo === 'full' ? 'bg-white dark:bg-gray-600 shadow text-yellow-600' : 'text-gray-500'}">Full</button>` : ''}
-                        </div>
-
-                        ${logistica.tipo === 'flex' ? `
-                            <div class="grid grid-cols-2 gap-2 mb-4 bg-blue-50 dark:bg-blue-900/10 p-2 rounded border border-blue-100 dark:border-blue-800/30">
-                                <div><label class="text-[9px] uppercase font-bold text-blue-600">Repasse (R$)</label><input type="number" oninput="atualizarValorLogistica('${canal.id}', 'repasse', this.value)" value="${logistica.repasse}" class="w-full text-xs p-1 border rounded dark:bg-gray-800"></div>
-                                <div><label class="text-[9px] uppercase font-bold text-blue-600">Motoboy (R$)</label><input type="number" oninput="atualizarValorLogistica('${canal.id}', 'motoboy', this.value)" value="${logistica.motoboy}" class="w-full text-xs p-1 border rounded dark:bg-gray-800"></div>
-                            </div>
-                        ` : ''}
-                        ${logistica.tipo === 'full' ? `
-                            <div class="mb-4 bg-yellow-50 dark:bg-yellow-900/10 p-2 rounded border border-yellow-100 dark:border-yellow-800/30">
-                                <label class="text-[9px] uppercase font-bold text-yellow-600">ICMS Filial / ST Extra (%)</label>
-                                <input type="number" oninput="atualizarValorLogistica('${canal.id}', 'icmsFull', this.value)" value="${logistica.icmsFull}" class="w-full text-xs p-1 mt-1 border rounded dark:bg-gray-800">
-                            </div>
-                        ` : ''}
-
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Preço Sugerido</p>
-                        <p class="text-3xl font-black ${isLucro ? 'text-gray-800 dark:text-white' : 'text-red-500'}">
-                            R$ ${isLucro ? pvSugerido.toFixed(2).replace('.', ',') : 'ERRO'}
-                        </p>
+                    <div class="p-3 grid grid-cols-4 gap-2 border-b border-darkborder bg-gray-900/50">
+                        <div><label class="text-[9px] font-bold text-gray-400 uppercase">Comissão(%)</label><input type="number" onchange="atualizarPlataforma('${plat.id}','comissao',this.value)" value="${plat.comissao}" class="w-full bg-gray-800 text-xs p-1 mt-1 border border-gray-700 rounded text-center"></div>
+                        <div><label class="text-[9px] font-bold text-gray-400 uppercase">Fixo(R$)</label><input type="number" onchange="atualizarPlataforma('${plat.id}','taxaFixa',this.value)" value="${plat.taxaFixa}" class="w-full bg-gray-800 text-xs p-1 mt-1 border border-gray-700 rounded text-center"></div>
+                        <div><label class="text-[9px] font-bold text-gray-400 uppercase">Afiliado(%)</label><input type="number" onchange="atualizarPlataforma('${plat.id}','afliado',this.value)" value="${plat.afliado}" class="w-full bg-gray-800 text-xs p-1 mt-1 border border-gray-700 rounded text-center"></div>
+                        <div><label class="text-[9px] font-bold text-gray-400 uppercase">Antecipa(%)</label><input type="number" onchange="atualizarPlataforma('${plat.id}','antecipacao',this.value)" value="${plat.antecipacao}" class="w-full bg-gray-800 text-xs p-1 mt-1 border border-gray-700 rounded text-center"></div>
                     </div>
 
-                    <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/30 flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] uppercase font-bold text-gray-500">Lucro Líquido</p>
-                            <p class="text-lg font-bold ${isLucro ? 'text-brand' : 'text-red-500'}">R$ ${isLucro ? lucroRealRS.toFixed(2).replace('.', ',') : '0,00'}</p>
+                    <div class="p-4 bg-gray-900 text-center">
+                        <p class="text-[10px] uppercase font-bold text-gray-500 mb-1">Preço Sugerido (Meta ${document.getElementById('p_lucro').value}%)</p>
+                        <p class="text-2xl font-black ${divisor <= 0 ? 'text-red-500' : 'text-white'}">
+                            ${divisor > 0 ? formatMoney(precoSugerido) : 'Impossível (Ajuste Taxas)'}
+                        </p>
+                        <button onclick="toggleBreakdown('${plat.id}')" class="text-[10px] text-brand hover:underline mt-2 flex items-center justify-center gap-1 w-full"><i data-lucide="search" class="w-3 h-3"></i> Ver Extrato Detalhado</button>
+                        
+                        <div id="breakdown_${plat.id}" class="hidden mt-3 text-left bg-gray-800 p-3 rounded text-[10px] space-y-1 font-mono border border-gray-700">
+                            <div class="flex justify-between text-gray-400"><span>Preço Venda:</span> <span>${formatMoney(precoSugerido)}</span></div>
+                            <div class="flex justify-between text-red-400"><span>Custo Produto:</span> <span>- ${formatMoney(custoTotalFabrica)}</span></div>
+                            <div class="flex justify-between text-red-400"><span>Impostos/Despesas (${(empresaTotalPerc*100).toFixed(1)}%):</span> <span>- ${formatMoney(precoSugerido * empresaTotalPerc)}</span></div>
+                            <div class="flex justify-between text-red-400"><span>Plataforma (${(platTotalPerc*100).toFixed(1)}% + Fixa):</span> <span>- ${formatMoney((precoSugerido * platTotalPerc) + taxaFixaReal)}</span></div>
+                            <hr class="border-gray-600 my-1">
+                            <div class="flex justify-between text-brand font-bold text-xs"><span>Lucro Limpo:</span> <span>${formatMoney(lucroSugerido)}</span></div>
                         </div>
-                        <div class="text-right">
-                            <p class="text-[10px] uppercase font-bold text-gray-500">Giro (ROI)</p>
-                            <p class="text-sm font-bold text-gray-700 dark:text-gray-300">${roi.toFixed(1)}%</p>
+                    </div>
+
+                    <div class="p-4 border-t border-darkborder bg-darkcard">
+                        <p class="text-[10px] uppercase font-bold text-gray-400 mb-2"><i data-lucide="calculator" class="w-3 h-3 inline"></i> Simulador Manual</p>
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-xs font-bold text-gray-500">R$</span>
+                            <input type="number" id="sim_${plat.id}" value="${precoSimulado > 0 ? precoSimulado.toFixed(2) : ''}" oninput="calcularTudo()" placeholder="Digite seu preço..." class="w-full bg-gray-800 border border-gray-600 rounded p-1.5 text-sm text-white font-bold outline-none focus:border-brand">
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-900 p-2 rounded border ${isLucroNegativo ? 'border-red-500/50' : 'border-gray-700'}">
+                            <div>
+                                <p class="text-[9px] uppercase font-bold text-gray-500">Lucro Simulado</p>
+                                <p class="text-sm font-black ${isLucroNegativo ? 'text-red-500' : 'text-brand'}">${formatMoney(lucroSimulado)}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] uppercase font-bold text-gray-500">ROI (%)</p>
+                                <p class="text-xs font-bold ${isLucroNegativo ? 'text-red-500' : 'text-gray-300'}">${roiSimulado.toFixed(1)}%</p>
+                            </div>
                         </div>
                     </div>
                 </div>`;
                 container.innerHTML += cardHTML;
             });
+            
+            lucide.createIcons();
+            atualizarGrafico(chartLabels, chartData);
         }
 
-        // Inicializa o sistema Sênior
-        carregarConfig();
+        function atualizarGrafico(labels, data) {
+            const ctx = document.getElementById('lucroChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Lucro Líquido Sugerido (R$)',
+                        data: data,
+                        backgroundColor: '#10B981',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94A3B8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94A3B8', font: {size: 10} } }
+                    }
+                }
+            });
+        }
+
+        // Init
+        carregarDados();
         calcularTudo();
     </script>
 </body>
