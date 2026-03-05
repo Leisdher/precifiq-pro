@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precifiq PRO | Lezari Inteligência</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { brand: '#10B981', darkbg: '#0F172A', darkcard: '#1E293B' }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkbg dark:text-gray-100 transition-colors duration-300 font-sans text-sm">
+
+    <header class="bg-white dark:bg-darkcard shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="shield-check" class="text-brand w-6 h-6"></i>
+                <h1 class="text-xl font-bold tracking-tight">Precifiq <span class="text-brand">PRO</span></h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 cursor-pointer bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-600">
+                    <span class="font-bold text-xs" id="lblVarejo">VAREJO</span>
+                    <input type="checkbox" id="toggleAtacado" class="sr-only" onchange="calcularTudo()">
+                    <div class="w-10 h-5 bg-gray-300 dark:bg-gray-600 rounded-full relative transition-colors"><div id="dotAtacado" class="w-4 h-4 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform"></div></div>
+                    <span class="font-bold text-xs text-gray-400" id="lblAtacado">ATACADO</span>
+                </label>
+                <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 transition">
+                    <i data-lucide="moon" id="moonIcon" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
+                    <i data-lucide="sun" id="sunIcon" class="w-5 h-5 text-yellow-500 hidden"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
+        
+        <aside class="xl:col-span-3 space-y-4">
+            <div class="bg-white dark:bg-darkcard rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+                <h2 class="font-bold uppercase text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Pedágio da Empresa</h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center"><label class="text-xs font-semibold">Simples Nacional (%)</label><input type="number" id="inpImposto" class="w-20 text-right bg-gray-50 dark:bg-gray-800 border rounded p-1 dark:border-gray-600" oninput="salvarConfig(); calcularTudo()"></div>
+                    <div class="flex justify-between items-center"><label class="text-xs font-semibold">Custo Fixo Operacional (%)</label><input type="number" id="inpCustoFixo" class="w-20 text-right bg-gray-50 dark:bg-gray-800 border rounded p-1 dark:border-gray-600" oninput="salvarConfig(); calcularTudo()"></div>
+                    <div class="flex justify-between items-center"><label class="text-xs font-semibold">Provisão Devolução (%)</label><input type="number" id="inpDevolucao" class="w-20 text-right bg-gray-50 dark:bg-gray-800 border rounded p-1 dark:border-gray-600" oninput="salvarConfig(); calcularTudo()"></div>
+                    <div class="flex justify-between items-center"><label class="text-xs font-semibold">Custo Capital/Juros (%)</label><input type="number" id="inpJuros" class="w-20 text-right bg-gray-50 dark:bg-gray-800 border rounded p-1 dark:border-gray-600" oninput="salvarConfig(); calcularTudo()"></div>
+                    <hr class="dark:border-gray-700">
+                    <div class="flex justify-between items-center"><label class="text-xs font-semibold text-red-500">Insucesso Flex/Motoboy (%)</label><input type="number" id="inpInsucesso" class="w-20 text-right bg-red-50 dark:bg-red-900/20 text-red-600 border border-red-200 rounded p-1" oninput="salvarConfig(); calcularTudo()"></div>
+                </div>
+                <button onclick="alert('Configurações Globais Salvas com Sucesso na sua Máquina!')" class="w-full mt-4 bg-gray-100 dark:bg-gray-800 py-2 rounded text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition">Salvar Configurações</button>
+            </div>
+        </aside>
+
+        <section class="xl:col-span-9 space-y-4">
+            
+            <div class="bg-white dark:bg-darkcard rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700 grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="col-span-2"><label class="text-xs font-bold uppercase">Custo Fábrica (R$)</label><input type="number" id="inpCustoBase" value="25.00" class="w-full mt-1 text-lg font-bold bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
+                <div><label class="text-xs font-bold uppercase">Embalagem (R$)</label><input type="number" id="inpEmbalagem" value="1.50" class="w-full mt-1 bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
+                <div><label class="text-xs font-bold uppercase">Itens (Qtd)</label><input type="number" id="inpQtdKit" value="1" class="w-full mt-1 bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
+                
+                <div class="col-span-2 md:col-span-1 border-l pl-4 dark:border-gray-700">
+                    <label class="text-xs font-bold text-brand uppercase">Margem Lucro (%)</label>
+                    <input type="number" id="inpLucro" value="20.00" class="w-full mt-1 text-lg font-bold text-brand bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded px-3 py-2" oninput="calcularTudo()">
+                </div>
+                <div><label class="text-xs font-bold uppercase">Ads / Mkt (%)</label><input type="number" id="inpAds" value="0.00" class="w-full mt-1 bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
+                <div><label class="text-xs font-bold uppercase">Antecipação (%)</label><input type="number" id="inpAntecipacao" value="0.00" class="w-full mt-1 bg-gray-50 dark:bg-gray-800 border rounded px-3 py-2 dark:border-gray-600" oninput="calcularTudo()"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cardsContainer">
+                </div>
+        </section>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // Dark Mode Logic
+        const html = document.documentElement;
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            html.classList.toggle('dark');
+            document.getElementById('moonIcon').classList.toggle('hidden');
+            document.getElementById('sunIcon').classList.toggle('hidden');
+        });
+
+        // Toggle Atacado Logic
+        const toggleAtacado = document.getElementById('toggleAtacado');
+        const dotAtacado = document.getElementById('dotAtacado');
+        const lblVarejo = document.getElementById('lblVarejo');
+        const lblAtacado = document.getElementById('lblAtacado');
+
+        toggleAtacado.addEventListener('change', () => {
+            if(toggleAtacado.checked) {
+                dotAtacado.classList.add('translate-x-5');
+                lblAtacado.classList.replace('text-gray-400', 'text-brand');
+                lblVarejo.classList.replace('text-brand', 'text-gray-400');
+            } else {
+                dotAtacado.classList.remove('translate-x-5');
+                lblVarejo.classList.replace('text-gray-400', 'text-brand');
+                lblAtacado.classList.replace('text-brand', 'text-gray-400');
+            }
+        });
+
+        // Salvar Configurações no Navegador (Garante que os dados não sumam)
+        function salvarConfig() {
+            const config = {
+                imposto: document.getElementById('inpImposto').value,
+                custoFixo: document.getElementById('inpCustoFixo').value,
+                devolucao: document.getElementById('inpDevolucao').value,
+                juros: document.getElementById('inpJuros').value,
+                insucesso: document.getElementById('inpInsucesso').value
+            };
+            localStorage.setItem('lezari_config', JSON.stringify(config));
+        }
+
+        function carregarConfig() {
+            const config = JSON.parse(localStorage.getItem('lezari_config'));
+            if (config) {
+                document.getElementById('inpImposto').value = config.imposto || 10.00;
+                document.getElementById('inpCustoFixo').value = config.custoFixo || 11.29;
+                document.getElementById('inpDevolucao').value = config.devolucao || 4.00;
+                document.getElementById('inpJuros').value = config.juros || 0.00;
+                document.getElementById('inpInsucesso').value = config.insucesso || 1.50;
+            } else {
+                // Defaults da empresa
+                document.getElementById('inpImposto').value = 10.00;
+                document.getElementById('inpCustoFixo').value = 11.29;
+                document.getElementById('inpDevolucao').value = 4.00;
+                document.getElementById('inpJuros').value = 0.00;
+                document.getElementById('inpInsucesso').value = 1.50;
+            }
+        }
+
+        // Banco de Dados das Plataformas (Regras 2026 Sênior)
+        const canais = [
+            { id: 'meli', nome: 'Mercado Livre', comissao: 0.12, taxaFixa: 0, cor: 'border-yellow-400', permiteFlex: true, permiteFull: true },
+            { id: 'shopee', nome: 'Shopee', comissao: 0.20, taxaFixa: 4.00, cor: 'border-orange-500', permiteFlex: true, permiteFull: true },
+            { id: 'amazon', nome: 'Amazon', comissao: 0.14, taxaFixa: 5.00, cor: 'border-blue-600', permiteFlex: true, permiteFull: true },
+            { id: 'magalu', nome: 'Magalu', comissao: 0.16, taxaFixa: 3.00, cor: 'border-blue-400', permiteFlex: true, permiteFull: true },
+            { id: 'netshoes', nome: 'Netshoes', comissao: 0.20, taxaFixa: 5.00, cor: 'border-purple-600', permiteFlex: false, permiteFull: true },
+            { id: 'tiktok', nome: 'TikTok Shop', comissao: 0.12, taxaFixa: 4.00, cor: 'border-gray-800', permiteFlex: false, permiteFull: false },
+            { id: 'shein', nome: 'Shein', comissao: 0.16, taxaFixa: 4.00, cor: 'border-gray-400', permiteFlex: false, permiteFull: false },
+            { id: 'temu', nome: 'Temu (Semi-Ger)', comissao: 0.03, taxaFixa: 15.00, cor: 'border-red-500', permiteFlex: false, permiteFull: false },
+            { id: 'direta', nome: 'WhatsApp / Direta', comissao: 0.04, taxaFixa: 0, cor: 'border-green-500', permiteFlex: false, permiteFull: false }
+        ];
+
+        // Estado da Logística de cada Card (Para guardar escolhas do usuário)
+        let logisticaStatus = {};
+        canais.forEach(c => { logisticaStatus[c.id] = { tipo: 'padrao', repasse: 13.90, motoboy: 15.00, icmsFull: 0.00 } });
+
+        function mudarLogistica(id, tipo) {
+            logisticaStatus[id].tipo = tipo;
+            calcularTudo();
+        }
+
+        function atualizarValorLogistica(id, campo, valor) {
+            logisticaStatus[id][campo] = parseFloat(valor) || 0;
+            calcularTudo();
+        }
+
+        function calcularTudo() {
+            const isAtacado = toggleAtacado.checked;
+
+            // Variáveis Internas
+            const imposto = (parseFloat(document.getElementById('inpImposto').value) || 0) / 100;
+            const custoFixo = (parseFloat(document.getElementById('inpCustoFixo').value) || 0) / 100;
+            const devolucao = (parseFloat(document.getElementById('inpDevolucao').value) || 0) / 100;
+            const juros = (parseFloat(document.getElementById('inpJuros').value) || 0) / 100;
+            const insucesso = (parseFloat(document.getElementById('inpInsucesso').value) || 0) / 100;
+            
+            // Variáveis Produto
+            const custoBase = parseFloat(document.getElementById('inpCustoBase').value) || 0;
+            const embalagemBase = parseFloat(document.getElementById('inpEmbalagem').value) || 0;
+            const qtdKit = parseFloat(document.getElementById('inpQtdKit').value) || 1;
+            
+            // Variáveis Estratégia
+            const lucroAlvo = (parseFloat(document.getElementById('inpLucro').value) || 0) / 100;
+            const ads = (parseFloat(document.getElementById('inpAds').value) || 0) / 100;
+            const antecipacao = (parseFloat(document.getElementById('inpAntecipacao').value) || 0) / 100;
+
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = ''; // Limpa os cards
+
+            canais.forEach(canal => {
+                // Trava do Atacado: Oculta plataformas que não operam B2B nativamente
+                if (isAtacado && (canal.id === 'temu' || canal.id === 'shein')) return;
+
+                const logistica = logisticaStatus[canal.id];
+                let embalagemCalculada = embalagemBase;
+                let taxaPlataformaFixa = canal.taxaFixa * (isAtacado ? 1 : qtdKit); // Regra de Kit aplicada
+                let impostoCalculado = imposto;
+                let custoExtraFlex = 0;
+
+                // Tripla Checagem: Regras de Logística Avançada
+                if (logistica.tipo === 'full') {
+                    embalagemCalculada = 0; // O Galpão embala
+                    impostoCalculado = imposto + (logistica.icmsFull / 100); // Taxa de Filial MG/SC
+                } else if (logistica.tipo === 'flex') {
+                    // Custo do Motoboy - Repasse da Plataforma + Risco de Insucesso
+                    custoExtraFlex = (logistica.motoboy - logistica.repasse) + (logistica.motoboy * insucesso);
+                }
+
+                // Cálculo Reverso (Engenharia Financeira)
+                const pedagio = impostoCalculado + custoFixo + devolucao + juros;
+                const somaPercentuais = pedagio + canal.comissao + ads + antecipacao + lucroAlvo;
+                const divisor = 1 - somaPercentuais;
+
+                let custoAbsoluto = custoBase + embalagemCalculada + custoExtraFlex + taxaPlataformaFixa;
+                let pvSugerido = 0;
+
+                if (divisor > 0) {
+                    pvSugerido = custoAbsoluto / divisor;
+                }
+
+                // Correção Amazon FBA (Mínimo de comissão R$1,00)
+                if (canal.id === 'amazon' && (pvSugerido * canal.comissao) < 1.00) {
+                    pvSugerido = (custoAbsoluto + 1.00) / (divisor + canal.comissao); // Recalcula forçando 1 real fixo
+                }
+
+                let lucroRealRS = pvSugerido * lucroAlvo;
+                let roi = (custoBase > 0) ? (lucroRealRS / custoBase) * 100 : 0;
+                let isLucro = lucroRealRS > 0 && divisor > 0;
+
+                // Geração da Interface Dinâmica (HTML Sênior do Card)
+                let cardHTML = `
+                <div class="bg-white dark:bg-darkcard rounded-xl border-l-4 ${canal.cor} border-y border-r border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-between overflow-hidden">
+                    <div class="p-4 bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <h3 class="font-bold uppercase text-gray-700 dark:text-gray-200 text-xs">${canal.nome}</h3>
+                    </div>
+                    
+                    <div class="p-4 flex-1">
+                        <div class="flex gap-1 mb-4 bg-gray-100 dark:bg-gray-800 p-1 rounded-md">
+                            <button onclick="mudarLogistica('${canal.id}', 'padrao')" class="flex-1 text-[10px] font-bold py-1 px-2 rounded ${logistica.tipo === 'padrao' ? 'bg-white dark:bg-gray-600 shadow' : 'text-gray-500'}">Padrão</button>
+                            ${canal.permiteFlex ? `<button onclick="mudarLogistica('${canal.id}', 'flex')" class="flex-1 text-[10px] font-bold py-1 px-2 rounded ${logistica.tipo === 'flex' ? 'bg-white dark:bg-gray-600 shadow text-blue-600' : 'text-gray-500'}">Flex</button>` : ''}
+                            ${canal.permiteFull ? `<button onclick="mudarLogistica('${canal.id}', 'full')" class="flex-1 text-[10px] font-bold py-1 px-2 rounded ${logistica.tipo === 'full' ? 'bg-white dark:bg-gray-600 shadow text-yellow-600' : 'text-gray-500'}">Full</button>` : ''}
+                        </div>
+
+                        ${logistica.tipo === 'flex' ? `
+                            <div class="grid grid-cols-2 gap-2 mb-4 bg-blue-50 dark:bg-blue-900/10 p-2 rounded border border-blue-100 dark:border-blue-800/30">
+                                <div><label class="text-[9px] uppercase font-bold text-blue-600">Repasse (R$)</label><input type="number" oninput="atualizarValorLogistica('${canal.id}', 'repasse', this.value)" value="${logistica.repasse}" class="w-full text-xs p-1 border rounded dark:bg-gray-800"></div>
+                                <div><label class="text-[9px] uppercase font-bold text-blue-600">Motoboy (R$)</label><input type="number" oninput="atualizarValorLogistica('${canal.id}', 'motoboy', this.value)" value="${logistica.motoboy}" class="w-full text-xs p-1 border rounded dark:bg-gray-800"></div>
+                            </div>
+                        ` : ''}
+                        ${logistica.tipo === 'full' ? `
+                            <div class="mb-4 bg-yellow-50 dark:bg-yellow-900/10 p-2 rounded border border-yellow-100 dark:border-yellow-800/30">
+                                <label class="text-[9px] uppercase font-bold text-yellow-600">ICMS Filial / ST Extra (%)</label>
+                                <input type="number" oninput="atualizarValorLogistica('${canal.id}', 'icmsFull', this.value)" value="${logistica.icmsFull}" class="w-full text-xs p-1 mt-1 border rounded dark:bg-gray-800">
+                            </div>
+                        ` : ''}
+
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Preço Sugerido</p>
+                        <p class="text-3xl font-black ${isLucro ? 'text-gray-800 dark:text-white' : 'text-red-500'}">
+                            R$ ${isLucro ? pvSugerido.toFixed(2).replace('.', ',') : 'ERRO'}
+                        </p>
+                    </div>
+
+                    <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/30 flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] uppercase font-bold text-gray-500">Lucro Líquido</p>
+                            <p class="text-lg font-bold ${isLucro ? 'text-brand' : 'text-red-500'}">R$ ${isLucro ? lucroRealRS.toFixed(2).replace('.', ',') : '0,00'}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] uppercase font-bold text-gray-500">Giro (ROI)</p>
+                            <p class="text-sm font-bold text-gray-700 dark:text-gray-300">${roi.toFixed(1)}%</p>
+                        </div>
+                    </div>
+                </div>`;
+                container.innerHTML += cardHTML;
+            });
+        }
+
+        // Inicializa o sistema Sênior
+        carregarConfig();
+        calcularTudo();
+    </script>
+</body>
+</html>
