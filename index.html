@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR" class="dark" translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Precifiq PRO | Dashboard Sênior Lezari</title>
+    <meta name="google" content="notranslate">
+    <title>Precifiq PRO | Inteligência Lezari</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -14,8 +15,7 @@
         }
     </script>
     <style>
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 10px; }
     </style>
@@ -27,17 +27,17 @@
             <div class="flex items-center gap-3">
                 <i data-lucide="shield-check" class="text-brand w-7 h-7"></i>
                 <div>
-                    <h1 class="text-xl font-black tracking-tight leading-none">Precifiq <span class="text-brand">PRO</span></h1>
-                    <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Donna Martins Intelligence</span>
+                    <h1 class="text-xl font-black tracking-tight leading-none text-white">Precifiq <span class="text-brand">PRO</span></h1>
+                    <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Donna Martins Intelligence - V4</span>
                 </div>
             </div>
             <div class="flex gap-4 items-center">
                 <div class="bg-gray-800 rounded-lg p-1 flex border border-darkborder">
-                    <button id="btnVarejo" class="px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow" onclick="setModo('varejo')">VAREJO</button>
-                    <button id="btnAtacado" class="px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white" onclick="setModo('atacado')">ATACADO</button>
+                    <button id="btnVarejo" class="px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow transition-all" onclick="setModo('varejo')">VAREJO / KITS</button>
+                    <button id="btnAtacado" class="px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white transition-all" onclick="setModo('atacado')">ATACADO B2B</button>
                 </div>
-                <button onclick="salvarGeral()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded shadow flex items-center gap-2 transition">
-                    <i data-lucide="save" class="w-4 h-4"></i> Salvar Tudo
+                <button onclick="salvarTudo()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded shadow flex items-center gap-2 transition">
+                    <i data-lucide="save" class="w-4 h-4"></i> Salvar Sistema
                 </button>
             </div>
         </div>
@@ -46,283 +46,362 @@
     <main class="max-w-screen-2xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <aside class="lg:col-span-3 space-y-6">
-            <div class="bg-darkcard rounded-xl p-5 border border-darkborder shadow-lg">
-                <h2 class="font-black uppercase text-gray-300 mb-4 flex items-center gap-2 border-b border-darkborder pb-2">
-                    <i data-lucide="building" class="w-4 h-4 text-brand"></i> Estrutura da Empresa
-                </h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Simples Nacional / Imposto (%)</label>
-                        <input type="number" id="g_imposto" value="10.00" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+            
+            <div class="bg-darkcard rounded-xl border border-darkborder shadow-lg overflow-hidden">
+                <div class="p-4 border-b border-darkborder bg-gray-900/50">
+                    <h2 class="font-black uppercase text-gray-300 flex items-center gap-2"><i data-lucide="calculator" class="w-4 h-4 text-brand"></i> Rateio de Custo Fixo</h2>
+                </div>
+                <div class="p-4 space-y-4">
+                    <div class="bg-blue-900/20 p-3 rounded border border-blue-900/50">
+                        <label class="text-[10px] font-bold text-blue-400 uppercase">Faturamento Médio Mensal (R$)</label>
+                        <input type="number" id="g_faturamento" value="50000" class="w-full bg-gray-900 border border-blue-800/50 rounded p-2 text-white font-bold mt-1 focus:border-blue-500 outline-none transition" oninput="calcularRateio()">
                     </div>
+                    
                     <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Custo Fixo Operacional (%)</label>
-                        <input type="number" id="g_custofixo" value="11.29" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase">Devoluções (%)</label>
-                            <input type="number" id="g_devolucao" value="2.00" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+                        <div class="flex justify-between items-end mb-2">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Despesas da Empresa (R$)</label>
+                            <button onclick="adicionarDespesa()" class="text-[10px] text-brand hover:underline flex items-center gap-1"><i data-lucide="plus" class="w-3 h-3"></i> Adicionar Conta</button>
                         </div>
+                        <div id="listaDespesas" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-1"></div>
+                    </div>
+
+                    <div class="bg-gray-800 p-3 rounded flex justify-between items-center border border-gray-700">
                         <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase">Juros Emp. (%)</label>
-                            <input type="number" id="g_juros" value="0.00" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Total Despesas</p>
+                            <p class="text-xs text-white font-bold" id="lblTotalDespesas">R$ 0,00</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-brand font-bold uppercase">Custo Fixo Gerado</p>
+                            <p class="text-xl text-brand font-black" id="lblCustoFixoPerc">0.00%</p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <div class="bg-darkcard rounded-xl p-4 border border-darkborder shadow-lg space-y-3">
+                <h2 class="font-black text-xs uppercase text-gray-400 mb-2 border-b border-darkborder pb-2">Impostos e Provisões Globais</h2>
+                <div class="flex justify-between items-center"><label class="text-[10px] font-bold text-gray-400 uppercase">Simples Nacional (%)</label><input type="number" id="g_imposto" value="10.00" class="w-20 text-right bg-gray-900 border border-gray-700 rounded p-1.5 text-white focus:border-brand outline-none" oninput="renderCards()"></div>
+                <div class="flex justify-between items-center"><label class="text-[10px] font-bold text-gray-400 uppercase">Provisão Devolução (%)</label><input type="number" id="g_devolucao" value="2.00" class="w-20 text-right bg-gray-900 border border-gray-700 rounded p-1.5 text-white focus:border-brand outline-none" oninput="renderCards()"></div>
+                <div class="flex justify-between items-center"><label class="text-[10px] font-bold text-gray-400 uppercase">Custo Capital/Juros (%)</label><input type="number" id="g_juros" value="0.00" class="w-20 text-right bg-gray-900 border border-gray-700 rounded p-1.5 text-white focus:border-brand outline-none" oninput="renderCards()"></div>
+                <div class="flex justify-between items-center"><label class="text-[10px] font-bold text-red-400 uppercase">Insucesso Flex (%)</label><input type="number" id="g_insucesso" value="1.50" class="w-20 text-right bg-red-900/20 border border-red-800/50 rounded p-1.5 text-red-400 focus:border-red-500 outline-none" oninput="renderCards()"></div>
+            </div>
+
             <div class="bg-darkcard rounded-xl p-5 border border-darkborder shadow-lg border-l-4 border-l-brand">
-                <h2 class="font-black uppercase text-brand mb-4 flex items-center gap-2 border-b border-darkborder pb-2">
-                    <i data-lucide="package" class="w-4 h-4"></i> Custo do Produto / Kit
-                </h2>
+                <h2 class="font-black uppercase text-brand mb-4 flex items-center gap-2 border-b border-darkborder pb-2"><i data-lucide="package" class="w-4 h-4"></i> Custo de Produção</h2>
                 <div class="space-y-4">
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase">Custo de Fábrica (R$ unitário)</label>
-                        <input type="number" id="p_custo" value="25.00" class="w-full bg-gray-900 border border-brand text-xl rounded p-2 text-white font-black mt-1" oninput="calcularTudo()">
+                        <input type="number" id="p_custo" value="25.00" class="w-full bg-gray-900 border border-brand text-xl rounded p-2 text-white font-black mt-1 focus:outline-none" oninput="renderCards()">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="text-[10px] font-bold text-gray-400 uppercase">Embalagem (R$)</label>
-                            <input type="number" id="p_embalagem" value="1.50" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1" oninput="calcularTudo()">
+                            <input type="number" id="p_embalagem" value="1.50" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white font-bold mt-1 focus:border-brand outline-none" oninput="renderCards()">
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-brand uppercase">Qtd (Formar Kit)</label>
-                            <input type="number" id="p_qtd" value="1" class="w-full bg-brand/20 border border-brand rounded p-2 text-brand font-black mt-1" oninput="calcularTudo()">
+                            <label class="text-[10px] font-bold text-brand uppercase">Itens no Kit (Qtd)</label>
+                            <input type="number" id="p_qtd" value="1" class="w-full bg-brand/20 border border-brand rounded p-2 text-brand font-black mt-1 focus:outline-none" oninput="renderCards()">
                         </div>
                     </div>
                     <hr class="border-darkborder">
-                    <div>
-                        <label class="text-xs font-black text-white uppercase">Margem de Lucro Desejada (%)</label>
-                        <input type="number" id="p_lucro" value="20.00" class="w-full bg-green-900/30 border border-green-500 rounded p-2 text-green-400 text-lg font-black mt-1 text-center" oninput="calcularTudo()">
+                    <div class="bg-green-900/10 p-3 rounded border border-green-900/30">
+                        <label class="text-xs font-black text-white uppercase block text-center">Meta de Lucro Excelente (%)</label>
+                        <input type="number" id="p_lucro" value="20.00" class="w-full bg-green-900/30 border border-green-500 rounded p-2 text-green-400 text-2xl font-black mt-2 text-center focus:outline-none" oninput="renderCards()">
                     </div>
                 </div>
             </div>
         </aside>
 
         <section class="lg:col-span-9 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" id="cardsContainer"></div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="cardsPlataformas">
-                </div>
-
             <div class="bg-darkcard rounded-xl p-5 border border-darkborder shadow-lg">
-                <h2 class="font-black uppercase text-gray-300 mb-4 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-brand"></i> Comparativo de Lucro Líquido (R$)</h2>
-                <div class="h-64 w-full">
-                    <canvas id="lucroChart"></canvas>
-                </div>
+                <h2 class="font-black uppercase text-gray-300 mb-4 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-brand"></i> Comparativo de Lucro Líquido na Meta (R$)</h2>
+                <div class="h-72 w-full"><canvas id="graficoLucro"></canvas></div>
             </div>
-
         </section>
     </main>
 
     <script>
         lucide.createIcons();
+
+        let modoAtual = 'varejo';
         let chartInstance = null;
-        let modoAtual = 'varejo'; // ou atacado
+        let custoFixoCalculadoPerc = 0;
 
-        function setModo(modo) {
-            modoAtual = modo;
-            document.getElementById('btnVarejo').className = modo === 'varejo' ? 'px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow' : 'px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white';
-            document.getElementById('btnAtacado').className = modo === 'atacado' ? 'px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow' : 'px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white';
-            calcularTudo();
-        }
-
-        // Banco de Dados Editável Sênior
-        let plataformas = [
-            { id: 'meli', nome: 'Mercado Livre', cor: 'border-yellow-400', text: 'text-yellow-400', comissao: 12, taxaFixa: 0, afliado: 0, antecipacao: 0, ads: 0 },
-            { id: 'shopee', nome: 'Shopee', cor: 'border-orange-500', text: 'text-orange-500', comissao: 20, taxaFixa: 4, afliado: 0, antecipacao: 0, ads: 0 },
-            { id: 'amazon', nome: 'Amazon', cor: 'border-blue-500', text: 'text-blue-500', comissao: 14, taxaFixa: 5, afliado: 0, antecipacao: 0, ads: 0 },
-            { id: 'shein', nome: 'Shein', cor: 'border-gray-300', text: 'text-gray-300', comissao: 16, taxaFixa: 4, afliado: 0, antecipacao: 0, ads: 0 },
-            { id: 'tiktok', nome: 'TikTok Shop', cor: 'border-pink-500', text: 'text-pink-500', comissao: 12, taxaFixa: 4, afliado: 5, antecipacao: 0, ads: 0 },
-            { id: 'direta', nome: 'Venda Direta / Site', cor: 'border-brand', text: 'text-brand', comissao: 4, taxaFixa: 0, afliado: 0, antecipacao: 0, ads: 0 }
+        let despesas = [
+            { id: 1, nome: 'Aluguel / Condomínio', valor: 1500 },
+            { id: 2, nome: 'Contador / Sistemas', valor: 350 },
+            { id: 3, nome: 'Energia / Internet', valor: 300 }
         ];
 
-        // Carrega dados salvos no PC
-        function carregarDados() {
-            const salvos = localStorage.getItem('precifiq_dados');
-            if(salvos) {
-                const data = JSON.parse(salvos);
-                document.getElementById('g_imposto').value = data.g_imposto;
-                document.getElementById('g_custofixo').value = data.g_custofixo;
-                document.getElementById('g_devolucao').value = data.g_devolucao;
-                document.getElementById('g_juros').value = data.g_juros;
-                if(data.plataformas) plataformas = data.plataformas;
-            }
+        // Banco de Dados das Plataformas (Atualizado 2026)
+        let plataformas = [
+            { id: 'meli', nome: 'Mercado Livre', cor: 'border-yellow-400', text: 'text-yellow-400', bg: 'bg-yellow-400/10', com: 19, fixo: 6.50, afi: 0, ant: 0, ads: 0, flex: true, full: true, logTipo: 'padrao', repasse: 13.90, motoboy: 15.00, icms: 0 },
+            { id: 'shopee', nome: 'Shopee', cor: 'border-orange-500', text: 'text-orange-500', bg: 'bg-orange-500/10', com: 20, fixo: 4, afi: 0, ant: 0, ads: 0, flex: true, full: false, logTipo: 'padrao', repasse: 5.00, motoboy: 12.00, icms: 0 },
+            { id: 'amazon', nome: 'Amazon', cor: 'border-blue-500', text: 'text-blue-500', bg: 'bg-blue-500/10', com: 14, fixo: 5, afi: 0, ant: 0, ads: 0, flex: true, full: true, logTipo: 'padrao', repasse: 0, motoboy: 15.00, icms: 0 },
+            { id: 'magalu', nome: 'Magalu', cor: 'border-blue-400', text: 'text-blue-400', bg: 'bg-blue-400/10', com: 16, fixo: 3, afi: 0, ant: 0, ads: 0, flex: true, full: true, logTipo: 'padrao', repasse: 0, motoboy: 15.00, icms: 0 },
+            { id: 'netshoes', nome: 'Netshoes', cor: 'border-purple-500', text: 'text-purple-500', bg: 'bg-purple-500/10', com: 20, fixo: 5, afi: 0, ant: 0, ads: 0, flex: false, full: true, logTipo: 'padrao', repasse: 0, motoboy: 0, icms: 0 },
+            { id: 'shein', nome: 'Shein', cor: 'border-gray-200', text: 'text-gray-200', bg: 'bg-gray-200/10', com: 16, fixo: 4, afi: 0, ant: 0, ads: 0, flex: false, full: false, logTipo: 'padrao', repasse: 0, motoboy: 0, icms: 0 },
+            { id: 'tiktok', nome: 'TikTok Shop', cor: 'border-pink-500', text: 'text-pink-500', bg: 'bg-pink-500/10', com: 12, fixo: 4, afi: 0, ant: 0, ads: 0, flex: false, full: false, logTipo: 'padrao', repasse: 0, motoboy: 0, icms: 0 },
+            { id: 'temu', nome: 'Temu', cor: 'border-red-500', text: 'text-red-500', bg: 'bg-red-500/10', com: 3, fixo: 15, afi: 0, ant: 0, ads: 0, flex: false, full: false, logTipo: 'padrao', repasse: 0, motoboy: 0, icms: 0 },
+            { id: 'direta', nome: 'Venda Direta / Site', cor: 'border-brand', text: 'text-brand', bg: 'bg-brand/10', com: 4, fixo: 0, afi: 0, ant: 0, ads: 0, flex: false, full: false, logTipo: 'padrao', repasse: 0, motoboy: 0, icms: 0 }
+        ];
+
+        function formatR$(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+
+        function setModo(m) {
+            modoAtual = m;
+            document.getElementById('btnVarejo').className = m === 'varejo' ? 'px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow' : 'px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white';
+            document.getElementById('btnAtacado').className = m === 'atacado' ? 'px-4 py-1.5 rounded-md text-xs font-bold bg-brand text-white shadow' : 'px-4 py-1.5 rounded-md text-xs font-bold text-gray-400 hover:text-white';
+            renderCards();
         }
 
-        function salvarGeral() {
+        function salvarTudo() {
             const data = {
-                g_imposto: document.getElementById('g_imposto').value,
-                g_custofixo: document.getElementById('g_custofixo').value,
-                g_devolucao: document.getElementById('g_devolucao').value,
-                g_juros: document.getElementById('g_juros').value,
+                faturamento: document.getElementById('g_faturamento').value,
+                imposto: document.getElementById('g_imposto').value,
+                devolucao: document.getElementById('g_devolucao').value,
+                juros: document.getElementById('g_juros').value,
+                insucesso: document.getElementById('g_insucesso').value,
+                despesas: despesas,
                 plataformas: plataformas
             };
-            localStorage.setItem('precifiq_dados', JSON.stringify(data));
-            alert("Inteligência da Donna Martins salva com sucesso na sua máquina!");
+            localStorage.setItem('lezari_v4', JSON.stringify(data));
+            alert("Inteligência 100% Salva!");
         }
 
-        // Atualiza variável do array
-        function atualizarPlataforma(id, campo, valor) {
-            const p = plataformas.find(x => x.id === id);
-            if(p) {
-                p[campo] = parseFloat(valor) || 0;
-                calcularTudo();
-            }
-        }
-
-        function toggleBreakdown(id) {
-            const el = document.getElementById(`breakdown_${id}`);
-            el.classList.toggle('hidden');
-        }
-
-        function formatMoney(val) {
-            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        function calcularTudo() {
-            const container = document.getElementById('cardsPlataformas');
-            container.innerHTML = '';
-            let chartLabels = [];
-            let chartData = [];
-
-            // Puxar Estrutura Global
-            const imposto = (parseFloat(document.getElementById('g_imposto').value) || 0) / 100;
-            const custofixo = (parseFloat(document.getElementById('g_custofixo').value) || 0) / 100;
-            const devolucao = (parseFloat(document.getElementById('g_devolucao').value) || 0) / 100;
-            const juros = (parseFloat(document.getElementById('g_juros').value) || 0) / 100;
-            const empresaTotalPerc = imposto + custofixo + devolucao + juros;
-
-            // Produto
-            const custoBase = parseFloat(document.getElementById('p_custo').value) || 0;
-            const embalagem = parseFloat(document.getElementById('p_embalagem').value) || 0;
-            const qtd = parseInt(document.getElementById('p_qtd').value) || 1;
-            const margemDesejada = (parseFloat(document.getElementById('p_lucro').value) || 0) / 100;
-
-            const custoTotalFabrica = (custoBase * qtd) + embalagem;
-
-            plataformas.forEach(plat => {
-                // Se Atacado, taxa fixa é cobrada 1x. Se Varejo (Kits), taxa fixa multiplica pela Qtd (Regra Shopee/Meli)
-                const taxaFixaReal = modoAtual === 'atacado' ? plat.taxaFixa : (plat.taxaFixa * qtd);
+        function carregarTudo() {
+            const s = localStorage.getItem('lezari_v4');
+            if(s) {
+                const data = JSON.parse(s);
+                if(data.faturamento) document.getElementById('g_faturamento').value = data.faturamento;
+                if(data.imposto) document.getElementById('g_imposto').value = data.imposto;
+                if(data.devolucao) document.getElementById('g_devolucao').value = data.devolucao;
+                if(data.juros) document.getElementById('g_juros').value = data.juros;
+                if(data.insucesso) document.getElementById('g_insucesso').value = data.insucesso;
+                if(data.despesas) despesas = data.despesas;
                 
-                const comissaoPerc = plat.comissao / 100;
-                const afiliadoPerc = plat.afliado / 100;
-                const antecipacaoPerc = plat.antecipacao / 100;
-                const adsPerc = plat.ads / 100;
-
-                const platTotalPerc = comissaoPerc + afiliadoPerc + antecipacaoPerc + adsPerc;
-                
-                // Engenharia do Preço Sugerido (Mark-up Divisor)
-                const divisor = 1 - (empresaTotalPerc + platTotalPerc + margemDesejada);
-                let precoSugerido = 0;
-                let lucroSugerido = 0;
-
-                if (divisor > 0) {
-                    precoSugerido = (custoTotalFabrica + taxaFixaReal) / divisor;
-                    lucroSugerido = precoSugerido * margemDesejada;
+                if(data.plataformas) {
+                    plataformas = plataformas.map(pBase => {
+                        const pSalva = data.plataformas.find(ps => ps.id === pBase.id);
+                        return pSalva ? {...pBase, ...pSalva} : pBase;
+                    });
                 }
+            }
+            calcularRateio();
+        }
 
-                // Engenharia do Simulador Livre (Se eu vender por X, qual o lucro?)
-                const inputSimulador = document.getElementById(`sim_${plat.id}`);
-                let precoSimulado = inputSimulador ? parseFloat(inputSimulador.value) : precoSugerido;
-                if(isNaN(precoSimulado) || precoSimulado === 0) precoSimulado = precoSugerido;
+        function calcularRateio() {
+            const fat = parseFloat(document.getElementById('g_faturamento').value) || 1;
+            let totalDesp = despesas.reduce((acc, curr) => acc + curr.valor, 0);
+            custoFixoCalculadoPerc = (totalDesp / fat) * 100;
+            
+            document.getElementById('lblTotalDespesas').innerText = formatR$(totalDesp);
+            document.getElementById('lblCustoFixoPerc').innerText = custoFixoCalculadoPerc.toFixed(2) + '%';
+            
+            renderListaDespesas();
+            renderCards();
+        }
 
-                const descontoEmpresaR = precoSimulado * empresaTotalPerc;
-                const descontoPlatR = (precoSimulado * platTotalPerc) + taxaFixaReal;
-                const lucroSimulado = precoSimulado - custoTotalFabrica - descontoEmpresaR - descontoPlatR;
-                const roiSimulado = custoTotalFabrica > 0 ? (lucroSimulado / custoTotalFabrica) * 100 : 0;
-
-                const isLucroNegativo = lucroSimulado < 0;
-
-                // Salvar dados pro gráfico
-                chartLabels.push(plat.nome);
-                chartData.push(lucroSugerido);
-
-                // Montar o Card Dinâmico HTML
-                let cardHTML = `
-                <div class="bg-gray-900 rounded-xl border-t-4 ${plat.cor} border-x border-b border-darkborder shadow flex flex-col overflow-hidden">
-                    <div class="p-3 bg-gray-800 border-b border-darkborder flex justify-between items-center">
-                        <h3 class="font-black uppercase ${plat.text} text-sm">${plat.nome}</h3>
+        function renderListaDespesas() {
+            const div = document.getElementById('listaDespesas');
+            div.innerHTML = '';
+            despesas.forEach(d => {
+                div.innerHTML += `
+                    <div class="flex gap-2 items-center bg-gray-900 p-1.5 rounded border border-gray-700">
+                        <input type="text" value="${d.nome}" onchange="altDesp(${d.id}, 'nome', this.value)" class="w-full bg-transparent text-[10px] text-white outline-none">
+                        <span class="text-[10px] text-gray-500">R$</span>
+                        <input type="number" value="${d.valor}" onchange="altDesp(${d.id}, 'valor', this.value)" class="w-20 bg-gray-800 rounded p-1 text-[10px] text-white text-right outline-none">
+                        <button onclick="remDesp(${d.id})" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
                     </div>
-                    
-                    <div class="p-3 grid grid-cols-4 gap-2 border-b border-darkborder bg-gray-900/50">
-                        <div><label class="text-[9px] font-bold text-gray-400 uppercase">Comissão(%)</label><input type="number" onchange="atualizarPlataforma('${plat.id}','comissao',this.value)" value="${plat.comissao}" class="w-full bg-gray-800 text-xs p-1 mt-1 border border-gray-700 rounded text-center"></div>
-                        <div><label class="text-[9px] font-bold text-gray-400 uppercase">Fixo(R$)</label><input type="number" onchange="atualizarPlataforma('${plat.id}','taxaFixa',this.value)" value="${plat.taxaFixa}" class="w-full bg-gray-800 text-xs p-1 mt-1 border border-gray-700 rounded text-center"></div>
-                        <div><label class="text-[9px] font-bold text-gray-400 uppercase">Afiliado(%)</label><input type="number" onchange="atualizarPlataforma('${plat.id}','afliado',this.value)" value="${plat.afliado}" class="w-full bg-gray-800 text-xs p-1 mt-1 border border-gray-700 rounded text-center"></div>
-                        <div><label class="text-[9px] font-bold text-gray-400 uppercase">Antecipa(%)</label><input type="number" onchange="atualizarPlataforma('${plat.id}','antecipacao',this.value)" value="${plat.antecipacao}" class="w-full bg-gray-800 text-xs p-1 mt-1 border border-gray-700 rounded text-center"></div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function altDesp(id, campo, val) {
+            const d = despesas.find(x => x.id === id);
+            if(d) { d[campo] = campo === 'valor' ? parseFloat(val) || 0 : val; calcularRateio(); }
+        }
+        function remDesp(id) { despesas = despesas.filter(x => x.id !== id); calcularRateio(); }
+        function adicionarDespesa() { despesas.push({id: Date.now(), nome: 'Nova Despesa', valor: 0}); calcularRateio(); }
+
+        function setLogistica(platId, tipo) { const p = plataformas.find(x => x.id === platId); if(p) { p.logTipo = tipo; renderCards(); } }
+        function updatePlat(platId, campo, valor) { const p = plataformas.find(x => x.id === platId); if(p) { p[campo] = parseFloat(valor) || 0; renderCards(); } }
+        function toggleExtrato(id) { document.getElementById(`extrato_${id}`).classList.toggle('hidden'); }
+
+        // Módulo Matemático Isolado
+        function calcularValoresPlataforma(p, margemAlvoParam) {
+            const percEmpresaBase = (parseFloat(document.getElementById('g_imposto').value) || 0)/100 + (custoFixoCalculadoPerc)/100 + (parseFloat(document.getElementById('g_devolucao').value) || 0)/100 + (parseFloat(document.getElementById('g_juros').value) || 0)/100;
+            const percInsucesso = (parseFloat(document.getElementById('g_insucesso').value) || 0)/100;
+            const custoUni = parseFloat(document.getElementById('p_custo').value) || 0;
+            const embBase = parseFloat(document.getElementById('p_embalagem').value) || 0;
+            const qtd = parseFloat(document.getElementById('p_qtd').value) || 1;
+            
+            let embCard = embBase;
+            let icmsExtraPerc = 0;
+            let custoFlexExtra = 0;
+            
+            if(p.logTipo === 'full') { embCard = 0; icmsExtraPerc = p.icms / 100; } 
+            else if (p.logTipo === 'flex') { custoFlexExtra = (p.motoboy - p.repasse) + (p.motoboy * percInsucesso); }
+
+            const custoFabTotal = (custoUni * qtd);
+            const custoBaseFinal = custoFabTotal + embCard + custoFlexExtra;
+            const txFixaFinal = modoAtual === 'atacado' ? p.fixo : (p.fixo * qtd);
+
+            const percPlat = (p.com + p.afi + p.ant + p.ads) / 100;
+            const percEmpresaTotal = percEmpresaBase + icmsExtraPerc;
+            
+            const divisor = 1 - (percEmpresaTotal + percPlat + margemAlvoParam);
+            
+            let pSugerido = 0;
+            if(divisor > 0) pSugerido = (custoBaseFinal + txFixaFinal) / divisor;
+
+            if(p.id === 'amazon' && (pSugerido * (p.com/100)) < 1.00 && divisor > 0) {
+                pSugerido = (custoBaseFinal + txFixaFinal + 1.00) / (divisor + (p.com/100));
+            }
+
+            return { preco: pSugerido, lucro: pSugerido * margemAlvoParam, custoFinal: custoBaseFinal, taxaFixa: txFixaFinal, percPlat: percPlat, percEmpresa: percEmpresaTotal, custoFabrica: custoFabTotal };
+        }
+
+        // Isolando o Simulador (Resolve o Bug de Perder o Foco)
+        function atualizarSimulador(platId) {
+            const p = plataformas.find(x => x.id === platId);
+            const val = calcularValoresPlataforma(p, 0); // Parametros base
+            
+            const inpSim = document.getElementById(`sim_${platId}`);
+            let pSimulado = parseFloat(inpSim.value) || 0;
+
+            const descontoEmpR = pSimulado * val.percEmpresa;
+            const descontoPlatR = (pSimulado * val.percPlat) + val.taxaFixa;
+            const lucroSimulado = pSimulado - val.custoFinal - descontoEmpR - descontoPlatR;
+            const roiSim = val.custoFabrica > 0 ? (lucroSimulado / val.custoFabrica) * 100 : 0;
+            const isNeg = lucroSimulado < 0;
+
+            const divRes = document.getElementById(`res_sim_${platId}`);
+            const lblLucro = document.getElementById(`lbl_lucro_${platId}`);
+            const lblRoi = document.getElementById(`lbl_roi_${platId}`);
+
+            divRes.className = `flex justify-between items-center bg-gray-900 p-2 rounded border ${isNeg ? 'border-red-500/50' : 'border-gray-700'}`;
+            lblLucro.className = `text-sm font-black ${isNeg ? 'text-red-500' : 'text-brand'}`;
+            lblLucro.innerText = formatR$(lucroSimulado);
+            lblRoi.className = `text-xs font-bold ${isNeg ? 'text-red-500' : 'text-gray-300'}`;
+            lblRoi.innerText = roiSim.toFixed(1) + '%';
+        }
+
+        function renderCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            let chartLabels = [], chartData = [];
+            const margemAlvoGlobal = (parseFloat(document.getElementById('p_lucro').value) || 0)/100;
+
+            plataformas.forEach(p => {
+                if (modoAtual === 'atacado' && (p.id === 'shein' || p.id === 'temu')) return;
+
+                // Tiers de Precificação
+                const vSuper = calcularValoresPlataforma(p, 0.05); // 5%
+                const vAgres = calcularValoresPlataforma(p, 0.10); // 10%
+                const vBom = calcularValoresPlataforma(p, 0.15);   // 15%
+                const vMeta = calcularValoresPlataforma(p, margemAlvoGlobal); // Excelente
+
+                chartLabels.push(p.nome);
+                chartData.push(vMeta.lucro);
+
+                let html = `
+                <div class="bg-darkcard rounded-xl border-t-4 ${p.cor} shadow-lg border border-darkborder flex flex-col overflow-hidden">
+                    <div class="p-3 bg-gray-900 border-b border-darkborder flex justify-between items-center">
+                        <h3 class="font-black uppercase ${p.text} text-sm">${p.nome}</h3>
                     </div>
 
-                    <div class="p-4 bg-gray-900 text-center">
-                        <p class="text-[10px] uppercase font-bold text-gray-500 mb-1">Preço Sugerido (Meta ${document.getElementById('p_lucro').value}%)</p>
-                        <p class="text-2xl font-black ${divisor <= 0 ? 'text-red-500' : 'text-white'}">
-                            ${divisor > 0 ? formatMoney(precoSugerido) : 'Impossível (Ajuste Taxas)'}
-                        </p>
-                        <button onclick="toggleBreakdown('${plat.id}')" class="text-[10px] text-brand hover:underline mt-2 flex items-center justify-center gap-1 w-full"><i data-lucide="search" class="w-3 h-3"></i> Ver Extrato Detalhado</button>
+                    <div class="bg-gray-800 p-2 border-b border-darkborder">
+                        <div class="flex gap-1 bg-gray-900 p-1 rounded-md mb-2">
+                            <button onclick="setLogistica('${p.id}', 'padrao')" class="flex-1 text-[9px] font-bold py-1 px-2 rounded ${p.logTipo==='padrao'?'bg-gray-700 text-white shadow':'text-gray-500 hover:text-gray-300'} uppercase">Padrão</button>
+                            ${p.flex ? `<button onclick="setLogistica('${p.id}', 'flex')" class="flex-1 text-[9px] font-bold py-1 px-2 rounded ${p.logTipo==='flex'?'bg-blue-600 text-white shadow':'text-gray-500 hover:text-gray-300'} uppercase">Flex</button>` : ''}
+                            ${p.full ? `<button onclick="setLogistica('${p.id}', 'full')" class="flex-1 text-[9px] font-bold py-1 px-2 rounded ${p.logTipo==='full'?'bg-yellow-600 text-white shadow':'text-gray-500 hover:text-gray-300'} uppercase">Completo</button>` : ''}
+                        </div>
                         
-                        <div id="breakdown_${plat.id}" class="hidden mt-3 text-left bg-gray-800 p-3 rounded text-[10px] space-y-1 font-mono border border-gray-700">
-                            <div class="flex justify-between text-gray-400"><span>Preço Venda:</span> <span>${formatMoney(precoSugerido)}</span></div>
-                            <div class="flex justify-between text-red-400"><span>Custo Produto:</span> <span>- ${formatMoney(custoTotalFabrica)}</span></div>
-                            <div class="flex justify-between text-red-400"><span>Impostos/Despesas (${(empresaTotalPerc*100).toFixed(1)}%):</span> <span>- ${formatMoney(precoSugerido * empresaTotalPerc)}</span></div>
-                            <div class="flex justify-between text-red-400"><span>Plataforma (${(platTotalPerc*100).toFixed(1)}% + Fixa):</span> <span>- ${formatMoney((precoSugerido * platTotalPerc) + taxaFixaReal)}</span></div>
+                        ${p.logTipo === 'flex' ? `
+                            <div class="grid grid-cols-2 gap-2 p-2 bg-blue-900/20 border border-blue-800/50 rounded">
+                                <div><label class="text-[8px] uppercase font-bold text-blue-400">Repasse Plat.(R$)</label><input type="number" onchange="updatePlat('${p.id}','repasse',this.value)" value="${p.repasse}" class="w-full bg-gray-900 text-[10px] p-1 border border-blue-900/50 rounded text-white outline-none"></div>
+                                <div><label class="text-[8px] uppercase font-bold text-blue-400">Custo Motoboy(R$)</label><input type="number" onchange="updatePlat('${p.id}','motoboy',this.value)" value="${p.motoboy}" class="w-full bg-gray-900 text-[10px] p-1 border border-blue-900/50 rounded text-white outline-none"></div>
+                            </div>
+                        `: ''}
+                        ${p.logTipo === 'full' ? `
+                            <div class="p-2 bg-yellow-900/20 border border-yellow-800/50 rounded">
+                                <label class="text-[8px] uppercase font-bold text-yellow-400">ICMS Filial Extra (%)</label>
+                                <input type="number" onchange="updatePlat('${p.id}','icms',this.value)" value="${p.icms}" class="w-full bg-gray-900 text-[10px] p-1 border border-yellow-900/50 rounded text-white outline-none">
+                            </div>
+                        `: ''}
+                    </div>
+
+                    <div class="p-3 grid grid-cols-4 gap-2 border-b border-darkborder ${p.bg}">
+                        <div><label class="text-[8px] font-bold text-gray-400 uppercase">Comis(%)</label><input type="number" onchange="updatePlat('${p.id}','com',this.value)" value="${p.com}" class="w-full bg-gray-900 text-[10px] p-1 border border-gray-700 rounded text-center text-white outline-none focus:border-brand"></div>
+                        <div><label class="text-[8px] font-bold text-gray-400 uppercase">Fixo(R$)</label><input type="number" onchange="updatePlat('${p.id}','fixo',this.value)" value="${p.fixo}" class="w-full bg-gray-900 text-[10px] p-1 border border-gray-700 rounded text-center text-white outline-none focus:border-brand"></div>
+                        <div><label class="text-[8px] font-bold text-gray-400 uppercase">Afil(%)</label><input type="number" onchange="updatePlat('${p.id}','afi',this.value)" value="${p.afi}" class="w-full bg-gray-900 text-[10px] p-1 border border-gray-700 rounded text-center text-white outline-none focus:border-brand"></div>
+                        <div><label class="text-[8px] font-bold text-gray-400 uppercase">Antec(%)</label><input type="number" onchange="updatePlat('${p.id}','ant',this.value)" value="${p.ant}" class="w-full bg-gray-900 text-[10px] p-1 border border-gray-700 rounded text-center text-white outline-none focus:border-brand"></div>
+                    </div>
+
+                    <div class="p-3 bg-gray-900 border-b border-darkborder space-y-1">
+                        <p class="text-[9px] uppercase font-bold text-gray-500 mb-2 border-b border-gray-700 pb-1">Metas de Precificação</p>
+                        <div class="flex justify-between items-center text-[10px] text-gray-400"><span>Super Agressivo (5%)</span> <span class="font-bold">${formatR$(vSuper.preco)}</span></div>
+                        <div class="flex justify-between items-center text-[10px] text-gray-300"><span>Agressivo (10%)</span> <span class="font-bold">${formatR$(vAgres.preco)}</span></div>
+                        <div class="flex justify-between items-center text-[10px] text-gray-200"><span>Bom (15%)</span> <span class="font-bold">${formatR$(vBom.preco)}</span></div>
+                    </div>
+
+                    <div class="p-4 bg-gray-800 text-center border-b border-darkborder shadow-inner">
+                        <p class="text-[10px] uppercase font-bold text-brand mb-1">Meta Excelente (${(margemAlvoGlobal*100).toFixed(0)}%)</p>
+                        <p class="text-3xl font-black ${vMeta.preco <= 0 ? 'text-red-500' : 'text-white'}">
+                            ${vMeta.preco > 0 ? formatR$(vMeta.preco) : 'INVÁLIDO'}
+                        </p>
+                        <button onclick="toggleExtrato('${p.id}')" class="text-[9px] text-brand hover:underline mt-2 flex items-center justify-center gap-1 w-full"><i data-lucide="search" class="w-3 h-3"></i> Detalhar Extrato Excelente</button>
+                        
+                        <div id="extrato_${p.id}" class="hidden mt-3 text-left bg-gray-900 p-3 rounded text-[9px] space-y-1 font-mono border border-gray-700">
+                            <div class="flex justify-between text-gray-400"><span>Preço Final:</span> <span>${formatR$(vMeta.preco)}</span></div>
+                            <div class="flex justify-between text-red-400"><span>Custo Prod+Emb+Flex:</span> <span>- ${formatR$(vMeta.custoFinal)}</span></div>
+                            <div class="flex justify-between text-red-400"><span>Desp. Empresa (${(vMeta.percEmpresa*100).toFixed(1)}%):</span> <span>- ${formatR$(vMeta.preco * vMeta.percEmpresa)}</span></div>
+                            <div class="flex justify-between text-red-400"><span>Plataforma (${(vMeta.percPlat*100).toFixed(1)}% + Fixo):</span> <span>- ${formatR$((vMeta.preco * vMeta.percPlat) + vMeta.taxaFixa)}</span></div>
                             <hr class="border-gray-600 my-1">
-                            <div class="flex justify-between text-brand font-bold text-xs"><span>Lucro Limpo:</span> <span>${formatMoney(lucroSugerido)}</span></div>
+                            <div class="flex justify-between text-brand font-bold text-[10px]"><span>Lucro Líquido:</span> <span>${formatR$(vMeta.lucro)}</span></div>
                         </div>
                     </div>
 
-                    <div class="p-4 border-t border-darkborder bg-darkcard">
-                        <p class="text-[10px] uppercase font-bold text-gray-400 mb-2"><i data-lucide="calculator" class="w-3 h-3 inline"></i> Simulador Manual</p>
+                    <div class="p-4 bg-darkcard">
+                        <p class="text-[9px] uppercase font-bold text-gray-400 mb-2"><i data-lucide="calculator" class="w-3 h-3 inline"></i> Simulador Manual Livre</p>
                         <div class="flex items-center gap-2 mb-3">
                             <span class="text-xs font-bold text-gray-500">R$</span>
-                            <input type="number" id="sim_${plat.id}" value="${precoSimulado > 0 ? precoSimulado.toFixed(2) : ''}" oninput="calcularTudo()" placeholder="Digite seu preço..." class="w-full bg-gray-800 border border-gray-600 rounded p-1.5 text-sm text-white font-bold outline-none focus:border-brand">
+                            <input type="number" id="sim_${p.id}" value="${vMeta.preco > 0 ? vMeta.preco.toFixed(2) : ''}" oninput="atualizarSimulador('${p.id}')" class="w-full bg-gray-900 border border-gray-600 rounded p-1.5 text-sm text-white font-bold outline-none focus:border-brand">
                         </div>
-                        <div class="flex justify-between items-center bg-gray-900 p-2 rounded border ${isLucroNegativo ? 'border-red-500/50' : 'border-gray-700'}">
+                        <div id="res_sim_${p.id}" class="flex justify-between items-center bg-gray-900 p-2 rounded border border-gray-700">
                             <div>
-                                <p class="text-[9px] uppercase font-bold text-gray-500">Lucro Simulado</p>
-                                <p class="text-sm font-black ${isLucroNegativo ? 'text-red-500' : 'text-brand'}">${formatMoney(lucroSimulado)}</p>
+                                <p class="text-[8px] uppercase font-bold text-gray-500">Lucro Simulado</p>
+                                <p id="lbl_lucro_${p.id}" class="text-sm font-black text-brand">${formatR$(vMeta.lucro)}</p>
                             </div>
                             <div class="text-right">
-                                <p class="text-[9px] uppercase font-bold text-gray-500">ROI (%)</p>
-                                <p class="text-xs font-bold ${isLucroNegativo ? 'text-red-500' : 'text-gray-300'}">${roiSimulado.toFixed(1)}%</p>
+                                <p class="text-[8px] uppercase font-bold text-gray-500">ROI (%)</p>
+                                <p id="lbl_roi_${p.id}" class="text-xs font-bold text-gray-300">${(vMeta.custoFabrica > 0 ? (vMeta.lucro / vMeta.custoFabrica) * 100 : 0).toFixed(1)}%</p>
                             </div>
                         </div>
                     </div>
                 </div>`;
-                container.innerHTML += cardHTML;
+                container.innerHTML += html;
             });
             
             lucide.createIcons();
-            atualizarGrafico(chartLabels, chartData);
+            atualizarChart(chartLabels, chartData);
         }
 
-        function atualizarGrafico(labels, data) {
-            const ctx = document.getElementById('lucroChart').getContext('2d');
+        function atualizarChart(labels, data) {
+            const ctx = document.getElementById('graficoLucro').getContext('2d');
             if(chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Lucro Líquido Sugerido (R$)',
-                        data: data,
-                        backgroundColor: '#10B981',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94A3B8' } },
-                        x: { grid: { display: false }, ticks: { color: '#94A3B8', font: {size: 10} } }
-                    }
-                }
+                data: { labels: labels, datasets: [{ label: 'Lucro Meta Excelente (R$)', data: data, backgroundColor: '#10B981', borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#334155' }, ticks: { color: '#94A3B8' } }, x: { grid: { display: false }, ticks: { color: '#94A3B8', font: {size: 10} } } } }
             });
         }
 
-        // Init
-        carregarDados();
-        calcularTudo();
+        carregarTudo();
     </script>
 </body>
 </html>
